@@ -18,6 +18,7 @@ import { Route as InviteCodeRouteImport } from './routes/invite.$code'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated.profile'
 import { Route as AuthenticatedFixturesRouteImport } from './routes/_authenticated.fixtures'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
+import { Route as ApiPublicSyncWorldcupRouteImport } from './routes/api/public/sync-worldcup'
 import { Route as AuthenticatedMatchesMatchIdRouteImport } from './routes/_authenticated.matches.$matchId'
 import { Route as AuthenticatedLeaguesNewRouteImport } from './routes/_authenticated.leagues.new'
 import { Route as AuthenticatedLeaguesJoinRouteImport } from './routes/_authenticated.leagues.join'
@@ -67,6 +68,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ApiPublicSyncWorldcupRoute = ApiPublicSyncWorldcupRouteImport.update({
+  id: '/api/public/sync-worldcup',
+  path: '/api/public/sync-worldcup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedMatchesMatchIdRoute =
   AuthenticatedMatchesMatchIdRouteImport.update({
     id: '/matches/$matchId',
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/leagues/join': typeof AuthenticatedLeaguesJoinRoute
   '/leagues/new': typeof AuthenticatedLeaguesNewRoute
   '/matches/$matchId': typeof AuthenticatedMatchesMatchIdRoute
+  '/api/public/sync-worldcup': typeof ApiPublicSyncWorldcupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/leagues/join': typeof AuthenticatedLeaguesJoinRoute
   '/leagues/new': typeof AuthenticatedLeaguesNewRoute
   '/matches/$matchId': typeof AuthenticatedMatchesMatchIdRoute
+  '/api/public/sync-worldcup': typeof ApiPublicSyncWorldcupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/_authenticated/leagues/join': typeof AuthenticatedLeaguesJoinRoute
   '/_authenticated/leagues/new': typeof AuthenticatedLeaguesNewRoute
   '/_authenticated/matches/$matchId': typeof AuthenticatedMatchesMatchIdRoute
+  '/api/public/sync-worldcup': typeof ApiPublicSyncWorldcupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/leagues/join'
     | '/leagues/new'
     | '/matches/$matchId'
+    | '/api/public/sync-worldcup'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/leagues/join'
     | '/leagues/new'
     | '/matches/$matchId'
+    | '/api/public/sync-worldcup'
   id:
     | '__root__'
     | '/'
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/_authenticated/leagues/join'
     | '/_authenticated/leagues/new'
     | '/_authenticated/matches/$matchId'
+    | '/api/public/sync-worldcup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   InviteCodeRoute: typeof InviteCodeRoute
+  ApiPublicSyncWorldcupRoute: typeof ApiPublicSyncWorldcupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -255,6 +268,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/public/sync-worldcup': {
+      id: '/api/public/sync-worldcup'
+      path: '/api/public/sync-worldcup'
+      fullPath: '/api/public/sync-worldcup'
+      preLoaderRoute: typeof ApiPublicSyncWorldcupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/matches/$matchId': {
       id: '/_authenticated/matches/$matchId'
       path: '/matches/$matchId'
@@ -317,6 +337,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   InviteCodeRoute: InviteCodeRoute,
+  ApiPublicSyncWorldcupRoute: ApiPublicSyncWorldcupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
