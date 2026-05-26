@@ -78,7 +78,8 @@ async function handler({ request }: { request: Request }) {
     };
   });
 
-  const { error } = await supabaseAdmin.from("matches").upsert(rows, { onConflict: "id" });
+  // prediction_lock_utc is auto-filled by DB trigger; cast to satisfy generated types
+  const { error } = await supabaseAdmin.from("matches").upsert(rows as any, { onConflict: "id" });
   if (error) return Response.json({ error: error.message }, { status: 500 });
   return Response.json({ synced: rows.length });
 }
