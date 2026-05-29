@@ -11,7 +11,7 @@ export function AppHeader() {
       <div className="container-app flex items-center justify-between h-14">
         <Link to="/" className="display text-lg font-semibold tracking-tight">
           <span className="inline-block w-2 h-2 rounded-full bg-primary mr-2 align-middle" />
-          Carry-On <span className="text-muted-foreground font-normal">WC26</span>
+          WC26 <span className="text-muted-foreground font-normal">Predictor</span>
         </Link>
         {user ? (
           <nav className="flex items-center gap-4 text-sm">
