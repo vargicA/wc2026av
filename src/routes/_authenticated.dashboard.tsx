@@ -144,7 +144,7 @@ function Dashboard() {
         {banker && !changing ? (
           <div className="rounded-lg border border-border bg-card p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-3xl">{teamFlag(banker.team_code)}</span>
+              <span className="flag-xl">{teamFlag(banker.team_code)}</span>
               <div>
                 <div className="font-medium">{banker.team_name}</div>
                 <div className="text-xs text-muted-foreground">Points doubled whenever they play.</div>
