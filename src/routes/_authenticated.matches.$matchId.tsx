@@ -113,12 +113,12 @@ function MatchPage() {
         </div>
         <div className="display text-3xl font-semibold flex items-center justify-center gap-4 py-4">
           <span className="flex-1 text-right">
-            <span className="text-3xl block mb-1">{teamFlag(match.team_home_code)}</span>
+            <span className="flag-xl block mb-2">{teamFlag(match.team_home_code)}</span>
             {match.team_home}
           </span>
           <span className="text-muted-foreground text-sm font-sans">vs</span>
           <span className="flex-1 text-left">
-            <span className="text-3xl block mb-1">{teamFlag(match.team_away_code)}</span>
+            <span className="flag-xl block mb-2">{teamFlag(match.team_away_code)}</span>
             {match.team_away}
           </span>
         </div>
