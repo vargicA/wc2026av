@@ -8,6 +8,7 @@ import { MatchRow, type MatchRowData } from "@/components/MatchRow";
 import { fmtKickoff, countdownTo, teamFlag } from "@/lib/format";
 import { CHIP_META, CHIP_ORDER, type ChipType } from "@/lib/chips";
 import { setBanker } from "@/lib/chips.functions";
+import wc26Logo from "@/assets/wc26-logo.webp";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
