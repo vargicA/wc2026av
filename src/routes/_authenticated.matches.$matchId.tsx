@@ -137,6 +137,70 @@ function MatchPage() {
         )}
       </header>
 
+      {/* Banker indicator */}
+      {banker && (banker.team_code === match.team_home_code || banker.team_code === match.team_away_code) && (
+        <div className="rounded-lg border border-accent bg-accent/20 px-3 py-2 text-sm">
+          🏦 Your <span className="font-medium">{banker.team_name}</span> Banker is playing — points on this match are doubled.
+        </div>
+      )}
+
+      {/* Bonus chips */}
+      {!finished && (
+        <section>
+          <h2 className="display text-lg font-semibold mb-2">Bonus chip</h2>
+          {isLocked ? (
+            myChipOnThisMatch ? (
+              <div className="rounded-lg border border-border bg-muted/40 p-3 text-sm">
+                {CHIP_META[myChipOnThisMatch].emoji} <span className="font-medium">{CHIP_META[myChipOnThisMatch].label}</span> locked in for this match.
+              </div>
+            ) : (
+              <div className="rounded-lg border border-border bg-muted/40 p-3 text-sm text-muted-foreground">Chips locked.</div>
+            )
+          ) : (
+            <div className="space-y-2">
+              <div className="grid gap-2 sm:grid-cols-3">
+                {CHIP_ORDER.map((type) => {
+                  const meta = CHIP_META[type];
+                  const isApplied = myChipOnThisMatch === type;
+                  const usedElsewhere = usedTypes.has(type) && !isApplied;
+                  const disabled = usedElsewhere || chipMut.isPending;
+                  return (
+                    <button
+                      key={type}
+                      onClick={() => !isApplied && chipMut.mutate(type)}
+                      disabled={disabled}
+                      className={`rounded-lg border p-3 text-left transition-colors ${
+                        isApplied ? "border-primary bg-primary/10"
+                          : usedElsewhere ? "border-border bg-muted/40 opacity-60 cursor-not-allowed"
+                          : "border-border bg-card hover:border-primary/50"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between text-sm font-medium">
+                        <span>{meta.emoji} {meta.label}</span>
+                        {isApplied && <span className="text-xs text-primary">Applied</span>}
+                        {usedElsewhere && <span className="text-xs text-muted-foreground">Used</span>}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">{meta.description}</div>
+                    </button>
+                  );
+                })}
+              </div>
+              {myChipOnThisMatch && (
+                <button
+                  onClick={() => removeChipMut.mutate()}
+                  disabled={removeChipMut.isPending}
+                  className="text-xs text-muted-foreground hover:text-destructive">
+                  Remove {CHIP_META[myChipOnThisMatch].label}
+                </button>
+              )}
+              {chipMut.isError && <p className="text-sm text-destructive">{(chipMut.error as Error).message}</p>}
+              <p className="text-xs text-muted-foreground">Only one chip per match. Each chip can be used once for the whole tournament.</p>
+            </div>
+          )}
+        </section>
+      )}
+
+
       {!finished && (
         <section>
           <h2 className="display text-lg font-semibold mb-2">Your prediction</h2>
