@@ -34,9 +34,9 @@ export function MatchRow({
     <Link
       to="/matches/$matchId"
       params={{ matchId: String(m.id) }}
-      className="block rounded-lg border border-border bg-card hover:border-primary/50 transition-colors p-3"
+      className="block rounded-xl border border-border bg-card card-hover p-4"
     >
-      <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+      <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
         <span className="flex items-center gap-1.5">
           <span className="pill bg-secondary text-secondary-foreground">
             {m.stage === "group" ? `Group ${m.group_label}` : m.stage.toUpperCase()}
@@ -59,20 +59,20 @@ export function MatchRow({
         </span>
       </div>
       <div className="flex items-center justify-between gap-3">
-        <div className="flex-1 text-right truncate">
-          <span className="mr-2 text-lg">{teamFlag(m.team_home_code)}</span>
+        <div className="flex-1 text-right truncate flex items-center justify-end gap-3">
           <span className="font-medium">{m.team_home}</span>
+          <span className="flag-lg">{teamFlag(m.team_home_code)}</span>
         </div>
-        <div className="score-num text-xl min-w-[64px] text-center">
+        <div className="score-num text-xl min-w-[72px] text-center">
           {finished || live ? (
             <span>{m.score_home_ft ?? "–"}<span className="text-muted-foreground mx-1">·</span>{m.score_away_ft ?? "–"}</span>
           ) : (
             <span className="text-muted-foreground text-sm font-sans tabular">{fmtTime(m.kickoff_utc)}</span>
           )}
         </div>
-        <div className="flex-1 truncate">
+        <div className="flex-1 truncate flex items-center gap-3">
+          <span className="flag-lg">{teamFlag(m.team_away_code)}</span>
           <span className="font-medium">{m.team_away}</span>
-          <span className="ml-2 text-lg">{teamFlag(m.team_away_code)}</span>
         </div>
       </div>
       {(predicted || points !== undefined) && (
