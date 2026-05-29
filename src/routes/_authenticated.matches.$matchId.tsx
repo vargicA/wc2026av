@@ -5,10 +5,13 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { submitPrediction } from "@/lib/app.functions";
+import { applyChip, removeChip } from "@/lib/chips.functions";
+import { CHIP_META, CHIP_ORDER, type ChipType } from "@/lib/chips";
 import { fmtKickoff, countdownTo, teamFlag } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/matches/$matchId")({
   component: MatchPage,
+});
 });
 
 function MatchPage() {
