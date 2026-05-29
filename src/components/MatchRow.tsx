@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { fmtTime, teamFlag, countdownTo } from "@/lib/format";
+import { CHIP_META, type ChipType } from "@/lib/chips";
 
 export interface MatchRowData {
   id: number;
@@ -16,7 +17,15 @@ export interface MatchRowData {
   group_label: string | null;
 }
 
-export function MatchRow({ m, predicted, points }: { m: MatchRowData; predicted?: { h: number; a: number } | null; points?: number | null }) {
+export function MatchRow({
+  m, predicted, points, chip, bankerHit,
+}: {
+  m: MatchRowData;
+  predicted?: { h: number; a: number } | null;
+  points?: number | null;
+  chip?: ChipType | null;
+  bankerHit?: boolean;
+}) {
   const finished = m.status === "finished";
   const live = m.status === "live";
   const cd = countdownTo(m.prediction_lock_utc);
@@ -28,8 +37,20 @@ export function MatchRow({ m, predicted, points }: { m: MatchRowData; predicted?
       className="block rounded-lg border border-border bg-card hover:border-primary/50 transition-colors p-3"
     >
       <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-        <span className="pill bg-secondary text-secondary-foreground">
-          {m.stage === "group" ? `Group ${m.group_label}` : m.stage.toUpperCase()}
+        <span className="flex items-center gap-1.5">
+          <span className="pill bg-secondary text-secondary-foreground">
+            {m.stage === "group" ? `Group ${m.group_label}` : m.stage.toUpperCase()}
+          </span>
+          {chip && (
+            <span className="pill bg-primary/15 text-primary border border-primary/30" title={CHIP_META[chip].label}>
+              {CHIP_META[chip].emoji} {CHIP_META[chip].label}
+            </span>
+          )}
+          {bankerHit && (
+            <span className="pill bg-accent text-accent-foreground" title="Your Banker team is playing — points doubled">
+              🏦 Banker
+            </span>
+          )}
         </span>
         <span className="tabular">
           {live ? <span className="text-destructive font-medium">● LIVE</span>
@@ -60,8 +81,8 @@ export function MatchRow({ m, predicted, points }: { m: MatchRowData; predicted?
             {predicted ? <>Your pick: <span className="tabular font-medium text-foreground">{predicted.h}–{predicted.a}</span></> : "No prediction"}
           </span>
           {points !== null && points !== undefined && (
-            <span className={`pill ${points === 3 ? "bg-success text-success-foreground" : points === 1 ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>
-              {points} pt{points === 1 ? "" : "s"}
+            <span className={`pill ${points >= 3 ? "bg-success text-success-foreground" : points >= 1 ? "bg-accent text-accent-foreground" : points < 0 ? "bg-destructive text-destructive-foreground" : "bg-muted text-muted-foreground"}`}>
+              {points > 0 ? "+" : ""}{points} pt{Math.abs(points) === 1 ? "" : "s"}
             </span>
           )}
         </div>
