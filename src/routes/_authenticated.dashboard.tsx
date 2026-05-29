@@ -98,14 +98,21 @@ function Dashboard() {
   }, [myChips]);
 
   const [pickCode, setPickCode] = useState("");
+  const [changing, setChanging] = useState(false);
   const bankerMut = useMutation({
     mutationFn: async () => {
       const t = teams?.find((x) => x.code === pickCode);
       if (!t) throw new Error("Pick a team");
       return setBankerFn({ data: { team_code: t.code, team_name: t.name } });
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["banker"] }),
+    onSuccess: () => {
+      setChanging(false);
+      setPickCode("");
+      qc.invalidateQueries({ queryKey: ["banker"] });
+    },
   });
+
+  const showPicker = !bankerLocked && (!banker || changing);
 
   return (
     <main className="container-app py-6 space-y-8">
@@ -134,7 +141,7 @@ function Dashboard() {
           <h2 className="display text-2xl font-semibold">Banker team 🏦</h2>
           {bankerLocked && <span className="text-xs text-muted-foreground">Locked for the tournament</span>}
         </div>
-        {banker ? (
+        {banker && !changing ? (
           <div className="rounded-lg border border-border bg-card p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-3xl">{teamFlag(banker.team_code)}</span>
@@ -145,15 +152,15 @@ function Dashboard() {
             </div>
             {!bankerLocked && (
               <button
-                onClick={() => { setPickCode(""); qc.setQueryData(["banker", user?.id], null); }}
+                onClick={() => setChanging(true)}
                 className="text-xs text-muted-foreground hover:text-foreground">Change</button>
             )}
           </div>
-        ) : bankerLocked ? (
+        ) : bankerLocked && !banker ? (
           <div className="rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
             The tournament has started — banker selection is closed.
           </div>
-        ) : (
+        ) : showPicker ? (
           <div className="rounded-lg border border-border bg-card p-4 space-y-3">
             <p className="text-sm text-muted-foreground">
               Pick one team for the whole tournament. Whenever they play, your points on that match are doubled.
@@ -176,10 +183,13 @@ function Dashboard() {
               >
                 {bankerMut.isPending ? "Saving…" : "Lock in"}
               </button>
+              {changing && (
+                <button onClick={() => setChanging(false)} className="text-xs text-muted-foreground px-2">Cancel</button>
+              )}
             </div>
             {bankerMut.isError && <p className="text-sm text-destructive">{(bankerMut.error as Error).message}</p>}
           </div>
-        )}
+        ) : null}
       </section>
 
       {/* Chip status */}
