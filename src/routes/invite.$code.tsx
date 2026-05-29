@@ -19,11 +19,15 @@ function InvitePage() {
   useEffect(() => {
     if (loading) return;
     if (!user) {
+      try { localStorage.setItem("pending_invite", code); } catch {}
       navigate({ to: "/signup", search: { invite: code } as any, replace: true });
       return;
     }
     join({ data: { invite_code: code } })
-      .then((res) => navigate({ to: "/leagues/$leagueId", params: { leagueId: res.league.id }, replace: true }))
+      .then((res) => {
+        try { localStorage.removeItem("pending_invite"); } catch {}
+        navigate({ to: "/leagues/$leagueId", params: { leagueId: res.league.id }, replace: true });
+      })
       .catch((e) => setErr(e.message ?? "Could not join"));
   }, [loading, user, code, join, navigate]);
 
