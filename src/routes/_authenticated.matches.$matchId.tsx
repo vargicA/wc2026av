@@ -12,7 +12,6 @@ import { fmtKickoff, countdownTo, teamFlag } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/matches/$matchId")({
   component: MatchPage,
 });
-});
 
 function MatchPage() {
   const { matchId } = Route.useParams();
