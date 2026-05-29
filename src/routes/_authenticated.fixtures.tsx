@@ -44,7 +44,7 @@ function FixturesPage() {
   });
 
   const { data: myChips } = useQuery({
-    queryKey: ["my-chips", user?.id],
+    queryKey: ["my-chips-map", user?.id],
     enabled: !!user,
     queryFn: async () => {
       const { data } = await supabase.from("match_chips").select("match_id, chip_type").eq("user_id", user!.id);
