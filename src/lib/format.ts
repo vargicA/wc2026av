@@ -31,9 +31,9 @@ export function teamFlag(code: string | null | undefined): string {
   if (!code || code.length !== 3) return "⚽";
   // Map common FIFA 3-letter codes → ISO-2 for emoji flags. Fallback to ball.
   const map: Record<string, string> = {
-    USA: "US", CAN: "CA", MEX: "MX", ARG: "AR", BRA: "BR", URU: "UY", COL: "CO", ECU: "EC", PAR: "PY", CHI: "CL", PER: "PE", VEN: "VE",
+    USA: "US", CAN: "CA", MEX: "MX", ARG: "AR", BRA: "BR", URU: "UY", URY: "UY", COL: "CO", ECU: "EC", PAR: "PY", CHI: "CL", PER: "PE", VEN: "VE", CUR: "CW", HAI: "HT", CPV: "CV",
     FRA: "FR", ESP: "ES", GER: "DE", ITA: "IT", ENG: "GB", POR: "PT", NED: "NL", BEL: "BE", DEN: "DK", SUI: "CH", AUT: "AT", CRO: "HR", SRB: "RS", POL: "PL", SVN: "SI", SCO: "GB", WAL: "GB", UKR: "UA", TUR: "TR", NOR: "NO", SWE: "SE", CZE: "CZ", HUN: "HU", IRL: "IE", BIH: "BA", GRE: "GR", ROU: "RO", SVK: "SK", BUL: "BG", ALB: "AL", MKD: "MK", MNE: "ME", KOS: "XK", ISL: "IS", FIN: "FI",
-    MAR: "MA", TUN: "TN", EGY: "EG", ALG: "DZ", SEN: "SN", CIV: "CI", GHA: "GH", CMR: "CM", NGA: "NG", RSA: "ZA",
+    MAR: "MA", TUN: "TN", EGY: "EG", ALG: "DZ", SEN: "SN", CIV: "CI", GHA: "GH", CMR: "CM", NGA: "NG", RSA: "ZA", COD: "CD",
     JPN: "JP", KOR: "KR", AUS: "AU", IRN: "IR", KSA: "SA", QAT: "QA", UZB: "UZ", JOR: "JO", IRQ: "IQ", UAE: "AE",
     NZL: "NZ", PAN: "PA", CRC: "CR", HON: "HN", JAM: "JM",
   };
