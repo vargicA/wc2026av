@@ -43,14 +43,14 @@ function LeagueView() {
     },
   });
 
-  if (!league) return <main className="container-app py-6 text-muted-foreground">Loading…</main>;
-  const isCreator = league.created_by === user?.id;
-  const inviteUrl = typeof window !== "undefined" ? `${window.location.origin}/invite/${league.invite_code}` : "";
-
   const leaveMut = useMutation({
     mutationFn: async () => leave({ data: { league_id: leagueId } }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["my-leagues"] }); navigate({ to: "/dashboard" }); },
   });
+
+  if (!league) return <main className="container-app py-6 text-muted-foreground">Loading…</main>;
+  const isCreator = league.created_by === user?.id;
+  const inviteUrl = typeof window !== "undefined" ? `${window.location.origin}/invite/${league.invite_code}` : "";
 
   return (
     <main className="container-app py-6 space-y-6">
