@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import wc26Logo from "@/assets/wc26-logo.svg";
 
 export function AppHeader() {
   const { user } = useAuth();
@@ -9,8 +10,8 @@ export function AppHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
       <div className="container-app flex items-center justify-between h-14">
-        <Link to="/" className="display text-lg font-semibold tracking-tight">
-          <span className="inline-block w-2 h-2 rounded-full bg-primary mr-2 align-middle" />
+        <Link to="/" className="display text-lg font-semibold tracking-tight flex items-center gap-2">
+          <img src={wc26Logo} alt="" className="h-7 w-auto" />
           WC26 <span className="text-muted-foreground font-normal">Predictor</span>
         </Link>
         {user ? (
