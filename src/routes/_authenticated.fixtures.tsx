@@ -43,6 +43,26 @@ function FixturesPage() {
     },
   });
 
+  const { data: myChips } = useQuery({
+    queryKey: ["my-chips", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("match_chips").select("match_id, chip_type").eq("user_id", user!.id);
+      const m = new Map<number, string>();
+      for (const c of data ?? []) m.set(c.match_id as number, c.chip_type as string);
+      return m;
+    },
+  });
+
+  const { data: banker } = useQuery({
+    queryKey: ["banker", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("user_bankers").select("team_code").eq("user_id", user!.id).maybeSingle();
+      return data?.team_code ?? null;
+    },
+  });
+
   const filtered = useMemo(() => {
     if (!matches) return [];
     return matches.filter((m) => {
@@ -94,7 +114,9 @@ function FixturesPage() {
               <div className="space-y-2">
                 {ms.map((m) => {
                   const p = myPreds?.get(m.id);
-                  return <MatchRow key={m.id} m={m} predicted={p ? { h: p.h, a: p.a } : undefined} points={p?.pts ?? null} />;
+                  const chip = (myChips?.get(m.id) ?? null) as any;
+                  const bankerHit = !!banker && (banker === m.team_home_code || banker === m.team_away_code);
+                  return <MatchRow key={m.id} m={m} predicted={p ? { h: p.h, a: p.a } : undefined} points={p?.pts ?? null} chip={chip} bankerHit={bankerHit} />;
                 })}
               </div>
             </section>

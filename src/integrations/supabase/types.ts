@@ -64,6 +64,27 @@ export type Database = {
         }
         Relationships: []
       }
+      match_chips: {
+        Row: {
+          chip_type: string
+          created_at: string
+          match_id: number
+          user_id: string
+        }
+        Insert: {
+          chip_type: string
+          created_at?: string
+          match_id: number
+          user_id: string
+        }
+        Update: {
+          chip_type?: string
+          created_at?: string
+          match_id?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           group_label: string | null
@@ -186,6 +207,30 @@ export type Database = {
           created_at?: string
           display_name?: string
           id?: string
+        }
+        Relationships: []
+      }
+      user_bankers: {
+        Row: {
+          created_at: string
+          team_code: string
+          team_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          team_code: string
+          team_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          team_code?: string
+          team_name?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
