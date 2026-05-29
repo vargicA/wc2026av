@@ -39,7 +39,7 @@ export const joinLeague = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const code = data.invite_code.trim().toUpperCase();
-    const { data: league, error } = await supabase
+    const { data: league, error } = await supabaseAdmin
       .from("leagues").select("id, name").eq("invite_code", code).maybeSingle();
     if (error) throw new Error(error.message);
     if (!league) throw new Error("Invite code not found.");
