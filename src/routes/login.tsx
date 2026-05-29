@@ -3,6 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { GoogleSignInButton, OrDivider } from "@/components/GoogleSignInButton";
+import wc26Logo from "@/assets/wc26-logo.webp";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -29,6 +30,9 @@ function LoginPage() {
     <>
       <AppHeader />
       <main className="container-app max-w-sm pt-12">
+        <div className="flex justify-center mb-6">
+          <img src={wc26Logo} alt="FIFA World Cup 26" className="h-32 w-auto drop-shadow-[0_0_30px_rgba(59,130,246,0.35)]" />
+        </div>
         <h1 className="display text-3xl font-semibold">Welcome back</h1>
         <p className="mt-1 text-sm text-muted-foreground">Log in to make your picks.</p>
         <div className="mt-6">
