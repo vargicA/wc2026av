@@ -38,7 +38,11 @@ function SignupPage() {
       <main className="container-app max-w-sm pt-12">
         <h1 className="display text-3xl font-semibold">Create your account</h1>
         <p className="mt-1 text-sm text-muted-foreground">Then invite your friends.</p>
-        <form onSubmit={onSubmit} className="mt-6 space-y-3">
+        <div className="mt-6">
+          <GoogleSignInButton label="Sign up with Google" />
+          <OrDivider />
+        </div>
+        <form onSubmit={onSubmit} className="space-y-3">
           <input required placeholder="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)}
             className="w-full rounded-md border border-input bg-background px-3 py-2.5" />
           <input type="email" required placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}
