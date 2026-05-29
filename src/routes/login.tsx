@@ -3,7 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { GoogleSignInButton, OrDivider } from "@/components/GoogleSignInButton";
-import wc26Logo from "@/assets/wc26-logo.webp";
+import wc26Logo from "@/assets/wc26-logo.svg";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
