@@ -116,6 +116,15 @@ function Dashboard() {
 
   return (
     <main className="container-app py-6 space-y-8">
+      <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-card via-card to-primary/10 p-6 sm:p-8">
+        <div className="flex items-center gap-6">
+          <img src={wc26Logo} alt="FIFA World Cup 26" className="h-28 sm:h-36 w-auto drop-shadow-[0_0_30px_rgba(59,130,246,0.35)]" />
+          <div>
+            <h1 className="display text-3xl sm:text-4xl font-semibold leading-tight">World Cup 26</h1>
+            <p className="text-sm text-muted-foreground mt-1">Pick scores. Play chips. Climb the leaderboard.</p>
+          </div>
+        </div>
+      </section>
       <section>
         <div className="flex items-center justify-between mb-3">
           <h2 className="display text-2xl font-semibold">Up next</h2>
