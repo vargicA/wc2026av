@@ -12,8 +12,16 @@ function AuthLayout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (loading) return;
+    if (!user) {
       navigate({ to: "/login", replace: true });
+      return;
+    }
+    let pending: string | null = null;
+    try { pending = localStorage.getItem("pending_invite"); } catch {}
+    if (pending) {
+      try { localStorage.removeItem("pending_invite"); } catch {}
+      navigate({ to: "/invite/$code", params: { code: pending }, replace: true });
     }
   }, [loading, user, navigate]);
 
