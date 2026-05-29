@@ -65,6 +65,38 @@ function MatchPage() {
     },
   });
 
+  // Chips for this match (own) + which chip-types user has already used elsewhere
+  const applyChipFn = useServerFn(applyChip);
+  const removeChipFn = useServerFn(removeChip);
+  const { data: myChips } = useQuery({
+    queryKey: ["my-chips", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("match_chips").select("chip_type, match_id").eq("user_id", user!.id);
+      return data ?? [];
+    },
+  });
+  const myChipOnThisMatch = (myChips ?? []).find((c) => c.match_id === matchIdNum)?.chip_type as ChipType | undefined;
+  const usedTypes = new Set((myChips ?? []).map((c) => c.chip_type as ChipType));
+
+  const { data: banker } = useQuery({
+    queryKey: ["banker", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("user_bankers").select("*").eq("user_id", user!.id).maybeSingle();
+      return data;
+    },
+  });
+
+  const chipMut = useMutation({
+    mutationFn: async (type: ChipType) => applyChipFn({ data: { match_id: matchIdNum, chip_type: type } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["my-chips"] }),
+  });
+  const removeChipMut = useMutation({
+    mutationFn: async () => removeChipFn({ data: { match_id: matchIdNum } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["my-chips"] }),
+  });
+
   if (isLoading || !match) return <main className="container-app py-6 text-muted-foreground">Loading…</main>;
 
   const lock = countdownTo(match.prediction_lock_utc);
