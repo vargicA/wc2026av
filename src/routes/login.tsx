@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
+import { GoogleSignInButton, OrDivider } from "@/components/GoogleSignInButton";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -30,7 +31,11 @@ function LoginPage() {
       <main className="container-app max-w-sm pt-12">
         <h1 className="display text-3xl font-semibold">Welcome back</h1>
         <p className="mt-1 text-sm text-muted-foreground">Log in to make your picks.</p>
-        <form onSubmit={onSubmit} className="mt-6 space-y-3">
+        <div className="mt-6">
+          <GoogleSignInButton />
+          <OrDivider />
+        </div>
+        <form onSubmit={onSubmit} className="space-y-3">
           <input type="email" required placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-md border border-input bg-background px-3 py-2.5" />
           <input type="password" required placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}
