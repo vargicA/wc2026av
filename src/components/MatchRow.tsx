@@ -58,21 +58,21 @@ export function MatchRow({
             : cd.locked ? "Locked" : `Locks in ${cd.text}`}
         </span>
       </div>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex-1 text-right truncate flex items-center justify-end gap-3">
-          <span className="font-medium">{m.team_home}</span>
-          <span className="flag-lg">{teamFlag(m.team_home_code)}</span>
+      <div className="flex items-center justify-between gap-2 sm:gap-3">
+        <div className="flex-1 min-w-0 flex flex-col items-center sm:flex-row sm:justify-end sm:items-center gap-1 sm:gap-3">
+          <span className="order-2 sm:order-1 font-medium text-sm sm:text-base text-center sm:text-right break-words leading-tight">{m.team_home}</span>
+          <span className="order-1 sm:order-2 flag-lg">{teamFlag(m.team_home_code)}</span>
         </div>
-        <div className="score-num text-xl min-w-[72px] text-center">
+        <div className="score-num text-xl min-w-[56px] sm:min-w-[72px] text-center shrink-0">
           {finished || live ? (
             <span>{m.score_home_ft ?? "–"}<span className="text-muted-foreground mx-1">·</span>{m.score_away_ft ?? "–"}</span>
           ) : (
             <span className="text-muted-foreground text-sm font-sans tabular">{fmtTime(m.kickoff_utc)}</span>
           )}
         </div>
-        <div className="flex-1 truncate flex items-center gap-3">
+        <div className="flex-1 min-w-0 flex flex-col items-center sm:flex-row sm:items-center gap-1 sm:gap-3">
           <span className="flag-lg">{teamFlag(m.team_away_code)}</span>
-          <span className="font-medium">{m.team_away}</span>
+          <span className="font-medium text-sm sm:text-base text-center sm:text-left break-words leading-tight">{m.team_away}</span>
         </div>
       </div>
       {(predicted || points !== undefined) && (
