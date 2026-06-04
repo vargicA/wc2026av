@@ -19,6 +19,15 @@ function Dashboard() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const setBankerFn = useServerFn(setBanker);
+  const unreadFn = useServerFn(getLeagueUnreadCounts);
+
+  const { data: unread } = useQuery({
+    queryKey: ["league-unread"],
+    enabled: !!user,
+    queryFn: () => unreadFn(),
+    refetchInterval: 30000,
+  });
+
 
   const { data: leagues } = useQuery({
     queryKey: ["my-leagues", user?.id],
