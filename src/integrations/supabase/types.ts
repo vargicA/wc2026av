@@ -40,6 +40,64 @@ export type Database = {
           },
         ]
       }
+      league_message_reads: {
+        Row: {
+          last_read_at: string
+          league_id: string
+          user_id: string
+        }
+        Insert: {
+          last_read_at?: string
+          league_id: string
+          user_id: string
+        }
+        Update: {
+          last_read_at?: string
+          league_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_message_reads_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      league_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          league_id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          league_id: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          league_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_messages_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leagues: {
         Row: {
           created_at: string
