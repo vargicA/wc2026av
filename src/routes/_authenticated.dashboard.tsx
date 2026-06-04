@@ -8,6 +8,7 @@ import { MatchRow, type MatchRowData } from "@/components/MatchRow";
 import { fmtKickoff, countdownTo, teamFlag } from "@/lib/format";
 import { CHIP_META, CHIP_ORDER, type ChipType } from "@/lib/chips";
 import { setBanker } from "@/lib/chips.functions";
+import { getLeagueUnreadCounts } from "@/lib/league-chat.functions";
 import wc26Logo from "@/assets/wc26-logo.svg";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -18,6 +19,15 @@ function Dashboard() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const setBankerFn = useServerFn(setBanker);
+  const unreadFn = useServerFn(getLeagueUnreadCounts);
+
+  const { data: unread } = useQuery({
+    queryKey: ["league-unread"],
+    enabled: !!user,
+    queryFn: () => unreadFn(),
+    refetchInterval: 30000,
+  });
+
 
   const { data: leagues } = useQuery({
     queryKey: ["my-leagues", user?.id],
@@ -242,13 +252,23 @@ function Dashboard() {
           </div>
         ) : (
           <div className="grid gap-2 sm:grid-cols-2">
-            {leagues.map((l: any) => (
-              <Link key={l.id} to="/leagues/$leagueId" params={{ leagueId: l.id }}
-                className="rounded-lg border border-border bg-card p-4 hover:border-primary/50">
-                <div className="font-medium">{l.name}</div>
-                <div className="text-xs text-muted-foreground mt-1 tabular">Code: {l.invite_code}</div>
-              </Link>
-            ))}
+            {leagues.map((l: any) => {
+              const u = unread?.find((x) => x.league_id === l.id)?.unread ?? 0;
+              return (
+                <Link key={l.id} to="/leagues/$leagueId" params={{ leagueId: l.id }}
+                  className="rounded-lg border border-border bg-card p-4 hover:border-primary/50 flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="font-medium">{l.name}</div>
+                    <div className="text-xs text-muted-foreground mt-1 tabular">Code: {l.invite_code}</div>
+                  </div>
+                  {u > 0 && (
+                    <span className="pill bg-primary text-primary-foreground text-xs px-2 min-w-[22px] text-center shrink-0">
+                      {u}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>
