@@ -29,6 +29,14 @@ export function countdownTo(iso: string): { text: string; locked: boolean } {
 
 export function teamFlag(code: string | null | undefined): string {
   if (!code || code.length !== 3) return "⚽";
+  const upper = code.toUpperCase();
+  // Special subdivision flags (England, Scotland, Wales) — emoji tag sequences
+  const subdivision: Record<string, string> = {
+    ENG: "🏴\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}",
+    SCO: "🏴\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}",
+    WAL: "🏴\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}",
+  };
+  if (subdivision[upper]) return subdivision[upper];
   // Map common FIFA 3-letter codes → ISO-2 for emoji flags. Fallback to ball.
   const map: Record<string, string> = {
     USA: "US", CAN: "CA", MEX: "MX", ARG: "AR", BRA: "BR", URU: "UY", URY: "UY", COL: "CO", ECU: "EC", PAR: "PY", CHI: "CL", PER: "PE", VEN: "VE", CUR: "CW", HAI: "HT", CPV: "CV",
@@ -37,6 +45,7 @@ export function teamFlag(code: string | null | undefined): string {
     JPN: "JP", KOR: "KR", AUS: "AU", IRN: "IR", KSA: "SA", QAT: "QA", UZB: "UZ", JOR: "JO", IRQ: "IQ", UAE: "AE",
     NZL: "NZ", PAN: "PA", CRC: "CR", HON: "HN", JAM: "JM",
   };
-  const iso = map[code.toUpperCase()] ?? code.slice(0, 2).toUpperCase();
+  const iso = map[upper] ?? code.slice(0, 2).toUpperCase();
+
   return iso.replace(/./g, (c) => String.fromCodePoint(0x1f1e6 - 65 + c.charCodeAt(0)));
 }
