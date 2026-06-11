@@ -123,7 +123,9 @@ function Dashboard() {
     },
   });
 
-  const showPicker = !bankerLocked && (!banker || changing);
+  // New players can still pick a banker after the tournament starts; only changes are locked.
+  const canChangeBanker = !bankerLocked;
+  const showPicker = !banker || (canChangeBanker && changing);
 
   return (
     <main className="container-app py-6 space-y-8">
