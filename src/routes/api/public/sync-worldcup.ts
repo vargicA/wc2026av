@@ -30,9 +30,9 @@ export const Route = createFileRoute("/api/public/sync-worldcup")({
 });
 
 async function handler({ request }: { request: Request }) {
-  const provided = request.headers.get("apikey") ?? request.headers.get("x-cron-secret") ?? new URL(request.url).searchParams.get("secret");
-  const expected = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.CRON_SECRET;
-  if (!expected || provided !== expected) {
+  const provided = request.headers.get("x-cron-secret") ?? new URL(request.url).searchParams.get("secret");
+  const expected = process.env.CRON_SECRET;
+  if (!expected || !provided || provided !== expected) {
     return new Response("Unauthorized", { status: 401 });
   }
   const apiKey = process.env.FOOTBALL_DATA_API_KEY;
