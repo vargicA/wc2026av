@@ -1,25 +1,8 @@
-## Problem
+## Verify CRON_SECRET fix
 
-In `src/components/MatchRow.tsx`, each team side uses `flex-1 truncate` with the flag and team name in a single horizontal row. On narrow screens the flag + score column eat most of the width, so longer names like "South Korea", "Saudi Arabia", "United States" get clipped ("uth Korea").
+1. Trigger a one-off manual call to `/api/public/sync-worldcup` using the new `CRON_SECRET` to confirm authentication succeeds.
+2. Check the response and the `matches` table to confirm the finished Mexico–South Africa fixture now has scores and `status = 'finished'`.
+3. Inspect `cron.job_run_details` for the most recent `wc-sync-results-15m` runs to confirm they return 200 instead of 401.
+4. If all green, no code changes required — done. If the manual call still 401s, re-check that the vault secret and project env var match exactly (no whitespace/newline).
 
-## Fix
-
-Update only `src/components/MatchRow.tsx` (presentation-only change):
-
-1. **Stack flag above name on mobile, side-by-side on larger screens.**
-   - Home side: `flex-col items-center sm:flex-row sm:justify-end sm:items-center`
-   - Away side: `flex-col items-center sm:flex-row sm:items-center`
-   - Flag stays large; name sits under it on mobile, centered.
-
-2. **Allow the name to wrap and shrink instead of truncating.**
-   - Replace `truncate` with `text-center sm:text-right` (home) / `sm:text-left` (away).
-   - Use `text-sm sm:text-base` so long names fit better on small screens.
-   - Use `break-words leading-tight` so two-word names like "South Korea" wrap cleanly to two lines.
-
-3. **Tighten the score column on mobile.**
-   - Change `min-w-[72px]` to `min-w-[56px] sm:min-w-[72px]` to give more room to team names.
-   - Reduce horizontal gap on mobile: `gap-2 sm:gap-3`.
-
-4. **Keep desktop appearance identical** — all current sizing/alignment is preserved at the `sm:` breakpoint and up.
-
-No changes to data, routes, or other components.
+No file edits are expected unless step 4 reveals a mismatch.

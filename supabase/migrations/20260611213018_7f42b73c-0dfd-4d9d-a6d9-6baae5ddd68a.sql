@@ -1,0 +1,2 @@
+SELECT vault.create_secret(replace(gen_random_uuid()::text, '-', '') || replace(gen_random_uuid()::text, '-', ''), 'CRON_SECRET', 'Shared secret for pg_cron -> /api/public/sync-worldcup');
+DROP TABLE IF EXISTS public._diag;

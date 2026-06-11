@@ -31,8 +31,12 @@ export const Route = createFileRoute("/api/public/sync-worldcup")({
 
 async function handler({ request }: { request: Request }) {
   const provided = request.headers.get("x-cron-secret") ?? new URL(request.url).searchParams.get("secret");
-  const expected = process.env.CRON_SECRET;
-  if (!expected || !provided || provided !== expected) {
+  if (!provided) return new Response("Unauthorized", { status: 401 });
+  // Pull the expected secret from the vault (same source the pg_cron job reads),
+  // so the two are always in sync. Fall back to the env var if the RPC fails.
+  const { data: secretRow } = await (supabaseAdmin as any).rpc("get_cron_secret");
+  const expected = (secretRow as string | null) ?? process.env.CRON_SECRET;
+  if (!expected || provided !== expected) {
     return new Response("Unauthorized", { status: 401 });
   }
   const apiKey = process.env.FOOTBALL_DATA_API_KEY;
