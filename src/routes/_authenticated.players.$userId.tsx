@@ -1,0 +1,98 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+export const Route = createFileRoute("/_authenticated/players/$userId")({
+  component: PlayerProfile,
+});
+
+function PlayerProfile() {
+  const { userId } = Route.useParams();
+
+  const { data: profile } = useQuery({
+    queryKey: ["player-profile", userId],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("*").eq("id", userId).single();
+      return data;
+    },
+  });
+
+  const { data: rows, isLoading } = useQuery({
+    queryKey: ["player-predictions", userId],
+    queryFn: async () => {
+      // RLS limits to predictions for matches that are locked AND in a shared league.
+      const { data, error } = await supabase
+        .from("predictions")
+        .select("match_id, predicted_score_home, predicted_score_away, points_awarded, matches(team_home, team_away, kickoff_utc, score_home_ft, score_away_ft, score_home_et, score_away_et, status)")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const totalPoints = (rows ?? []).reduce((s, r: any) => s + (r.points_awarded ?? 0), 0);
+
+  return (
+    <main className="container-app py-6 space-y-6">
+      <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">← Back</Link>
+
+      <header>
+        <h1 className="display text-3xl font-semibold">{profile?.display_name ?? "Player"}</h1>
+        <div className="mt-2 text-sm text-muted-foreground">
+          Total points: <span className="score-num text-foreground">{totalPoints}</span>
+        </div>
+      </header>
+
+      <section>
+        <h2 className="display text-lg font-semibold mb-3">Predictions</h2>
+        {isLoading ? (
+          <div className="text-sm text-muted-foreground">Loading…</div>
+        ) : !rows || rows.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-border p-6 text-center text-muted-foreground text-sm">
+            No visible predictions yet. Predictions become visible to league members once a match is locked (2 hours before kickoff).
+          </div>
+        ) : (
+          <div className="rounded-lg border border-border divide-y divide-border">
+            {rows.map((r: any) => {
+              const finished = r.matches?.status === "finished";
+              const actualHome = r.matches?.score_home_et ?? r.matches?.score_home_ft;
+              const actualAway = r.matches?.score_away_et ?? r.matches?.score_away_ft;
+              return (
+                <Link
+                  key={r.match_id}
+                  to="/matches/$matchId"
+                  params={{ matchId: String(r.match_id) }}
+                  className="block p-3 hover:bg-accent/30"
+                >
+                  <div className="flex items-center justify-between text-sm gap-3">
+                    <span className="truncate">{r.matches?.team_home} vs {r.matches?.team_away}</span>
+                    <span className="flex items-center gap-3 shrink-0">
+                      <span className="text-muted-foreground tabular">
+                        {r.predicted_score_home}–{r.predicted_score_away}
+                      </span>
+                      {finished && actualHome !== null && actualAway !== null && (
+                        <span className="score-num text-xs text-muted-foreground">
+                          → {actualHome}–{actualAway}
+                        </span>
+                      )}
+                      {finished && r.points_awarded !== null && (
+                        <span className={`pill ${
+                          r.points_awarded >= 3 ? "bg-success text-success-foreground" :
+                          r.points_awarded === 1 || r.points_awarded === 2 ? "bg-accent text-accent-foreground" :
+                          "bg-muted text-muted-foreground"
+                        }`}>
+                          {r.points_awarded}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </section>
+    </main>
+  );
+}
