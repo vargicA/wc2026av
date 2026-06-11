@@ -159,7 +159,7 @@ function Dashboard() {
       <section>
         <div className="flex items-baseline justify-between mb-3">
           <h2 className="display text-2xl font-semibold">Banker team 🏦</h2>
-          {bankerLocked && <span className="text-xs text-muted-foreground">Locked for the tournament</span>}
+          {bankerLocked && banker && <span className="text-xs text-muted-foreground">Locked for the tournament</span>}
         </div>
         {banker && !changing ? (
           <div className="rounded-lg border border-border bg-card p-4 flex items-center justify-between">
@@ -176,12 +176,13 @@ function Dashboard() {
                 className="text-xs text-muted-foreground hover:text-foreground">Change</button>
             )}
           </div>
-        ) : bankerLocked && !banker ? (
-          <div className="rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
-            The tournament has started — banker selection is closed.
-          </div>
         ) : showPicker ? (
           <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+            {bankerLocked && (
+              <p className="text-xs text-accent-foreground bg-accent/40 border border-accent rounded-md px-3 py-2">
+                The tournament has started, but you can still lock in your banker now. Once selected it can't be changed.
+              </p>
+            )}
             <p className="text-sm text-muted-foreground">
               Pick one team for the whole tournament. Whenever they play, your points on that match are doubled.
             </p>
