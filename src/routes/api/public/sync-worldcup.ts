@@ -35,7 +35,6 @@ async function handler({ request }: { request: Request }) {
   // Look up the expected secret from the same vault the cron job reads, so the
   // two are always in sync (no project env var drift).
   const { data: secretRow, error: secretErr } = await (supabaseAdmin as any)
-    .schema("private")
     .rpc("get_cron_secret");
   const expected = (secretRow as string | null) ?? process.env.CRON_SECRET;
   if (secretErr || !expected || provided !== expected) {
