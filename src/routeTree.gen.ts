@@ -19,6 +19,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedFixturesRouteImport } from './routes/_authenticated.fixtures'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as ApiPublicSyncWorldcupRouteImport } from './routes/api/public/sync-worldcup'
+import { Route as AuthenticatedPlayersUserIdRouteImport } from './routes/_authenticated.players.$userId'
 import { Route as AuthenticatedMatchesMatchIdRouteImport } from './routes/_authenticated.matches.$matchId'
 import { Route as AuthenticatedLeaguesNewRouteImport } from './routes/_authenticated.leagues.new'
 import { Route as AuthenticatedLeaguesJoinRouteImport } from './routes/_authenticated.leagues.join'
@@ -73,6 +74,12 @@ const ApiPublicSyncWorldcupRoute = ApiPublicSyncWorldcupRouteImport.update({
   path: '/api/public/sync-worldcup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedPlayersUserIdRoute =
+  AuthenticatedPlayersUserIdRouteImport.update({
+    id: '/players/$userId',
+    path: '/players/$userId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedMatchesMatchIdRoute =
   AuthenticatedMatchesMatchIdRouteImport.update({
     id: '/matches/$matchId',
@@ -110,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/leagues/join': typeof AuthenticatedLeaguesJoinRoute
   '/leagues/new': typeof AuthenticatedLeaguesNewRoute
   '/matches/$matchId': typeof AuthenticatedMatchesMatchIdRoute
+  '/players/$userId': typeof AuthenticatedPlayersUserIdRoute
   '/api/public/sync-worldcup': typeof ApiPublicSyncWorldcupRoute
 }
 export interface FileRoutesByTo {
@@ -125,6 +133,7 @@ export interface FileRoutesByTo {
   '/leagues/join': typeof AuthenticatedLeaguesJoinRoute
   '/leagues/new': typeof AuthenticatedLeaguesNewRoute
   '/matches/$matchId': typeof AuthenticatedMatchesMatchIdRoute
+  '/players/$userId': typeof AuthenticatedPlayersUserIdRoute
   '/api/public/sync-worldcup': typeof ApiPublicSyncWorldcupRoute
 }
 export interface FileRoutesById {
@@ -142,6 +151,7 @@ export interface FileRoutesById {
   '/_authenticated/leagues/join': typeof AuthenticatedLeaguesJoinRoute
   '/_authenticated/leagues/new': typeof AuthenticatedLeaguesNewRoute
   '/_authenticated/matches/$matchId': typeof AuthenticatedMatchesMatchIdRoute
+  '/_authenticated/players/$userId': typeof AuthenticatedPlayersUserIdRoute
   '/api/public/sync-worldcup': typeof ApiPublicSyncWorldcupRoute
 }
 export interface FileRouteTypes {
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
     | '/leagues/join'
     | '/leagues/new'
     | '/matches/$matchId'
+    | '/players/$userId'
     | '/api/public/sync-worldcup'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/leagues/join'
     | '/leagues/new'
     | '/matches/$matchId'
+    | '/players/$userId'
     | '/api/public/sync-worldcup'
   id:
     | '__root__'
@@ -190,6 +202,7 @@ export interface FileRouteTypes {
     | '/_authenticated/leagues/join'
     | '/_authenticated/leagues/new'
     | '/_authenticated/matches/$matchId'
+    | '/_authenticated/players/$userId'
     | '/api/public/sync-worldcup'
   fileRoutesById: FileRoutesById
 }
@@ -275,6 +288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSyncWorldcupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/players/$userId': {
+      id: '/_authenticated/players/$userId'
+      path: '/players/$userId'
+      fullPath: '/players/$userId'
+      preLoaderRoute: typeof AuthenticatedPlayersUserIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/matches/$matchId': {
       id: '/_authenticated/matches/$matchId'
       path: '/matches/$matchId'
@@ -314,6 +334,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedLeaguesJoinRoute: typeof AuthenticatedLeaguesJoinRoute
   AuthenticatedLeaguesNewRoute: typeof AuthenticatedLeaguesNewRoute
   AuthenticatedMatchesMatchIdRoute: typeof AuthenticatedMatchesMatchIdRoute
+  AuthenticatedPlayersUserIdRoute: typeof AuthenticatedPlayersUserIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -324,6 +345,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedLeaguesJoinRoute: AuthenticatedLeaguesJoinRoute,
   AuthenticatedLeaguesNewRoute: AuthenticatedLeaguesNewRoute,
   AuthenticatedMatchesMatchIdRoute: AuthenticatedMatchesMatchIdRoute,
+  AuthenticatedPlayersUserIdRoute: AuthenticatedPlayersUserIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -342,13 +364,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

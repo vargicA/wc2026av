@@ -116,7 +116,13 @@ function LeagueView() {
                   className={`grid grid-cols-[36px_1fr_60px_60px] gap-2 px-3 py-2.5 text-sm items-center ${isMe ? "bg-primary/10" : ""}`}>
                   <span className="tabular text-muted-foreground">{i + 1}</span>
                   <span className="flex items-center gap-2 truncate">
-                    <span className="truncate font-medium">{r.display_name ?? "Member"}</span>
+                    <Link
+                      to={isMe ? "/profile" : "/players/$userId"}
+                      params={isMe ? undefined : { userId: r.user_id }}
+                      className="truncate font-medium hover:underline"
+                    >
+                      {r.display_name ?? "Member"}
+                    </Link>
                     {isAdmin && <span className="pill bg-primary/20 text-primary text-[10px]">Admin</span>}
                     {isMe && <span className="pill bg-primary text-primary-foreground">you</span>}
                     {isCreator && !isMe && (
