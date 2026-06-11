@@ -316,7 +316,6 @@ export type Database = {
       }
     }
     Functions: {
-      get_cron_secret: { Args: never; Returns: string }
       is_league_member: {
         Args: { _league_id: string; _user_id: string }
         Returns: boolean
