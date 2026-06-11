@@ -14,21 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      _diag: {
-        Row: {
-          k: string | null
-          v: string | null
-        }
-        Insert: {
-          k?: string | null
-          v?: string | null
-        }
-        Update: {
-          k?: string | null
-          v?: string | null
-        }
-        Relationships: []
-      }
       league_members: {
         Row: {
           joined_at: string
