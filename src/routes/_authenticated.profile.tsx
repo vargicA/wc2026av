@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 
 function ProfilePage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const qc = useQueryClient();
   const update = useServerFn(updateDisplayName);
   const [name, setName] = useState("");
@@ -76,6 +77,14 @@ function ProfilePage() {
           <div>
             <div className="text-xs text-muted-foreground uppercase tracking-wider">Total points</div>
             <div className="score-num text-3xl">{totalPoints}</div>
+          </div>
+          <div className="pt-2 border-t border-border">
+            <button
+              onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }}
+              className="text-sm text-muted-foreground hover:text-destructive"
+            >
+              Sign out
+            </button>
           </div>
         </div>
       </section>
