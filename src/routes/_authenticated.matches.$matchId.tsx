@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
@@ -158,7 +160,33 @@ function MatchPage() {
             )
           ) : (
             <div className="space-y-2">
-              <div className="grid gap-2 sm:grid-cols-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-muted-foreground">Pick one chip for this match</span>
+                <TooltipProvider delayDuration={100}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button type="button" aria-label="About bonus chips" className="text-muted-foreground hover:text-foreground">
+                        <Info className="w-4 h-4" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="max-w-[260px] text-left">
+                      <div className="space-y-1.5">
+                        {CHIP_ORDER.map((type) => {
+                          const meta = CHIP_META[type];
+                          return (
+                            <div key={type}>
+                              <div className="font-medium">{meta.emoji} {meta.label}</div>
+                              <div className="opacity-80">{meta.description}</div>
+                            </div>
+                          );
+                        })}
+                        <div className="pt-1 opacity-80">Only one chip per match. Each chip can be used once for the whole tournament.</div>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
                 {CHIP_ORDER.map((type) => {
                   const meta = CHIP_META[type];
                   const isApplied = myChipOnThisMatch === type;
@@ -169,18 +197,17 @@ function MatchPage() {
                       key={type}
                       onClick={() => !isApplied && chipMut.mutate(type)}
                       disabled={disabled}
-                      className={`rounded-lg border p-3 text-left transition-colors ${
+                      title={meta.description}
+                      className={`rounded-lg border p-2 text-center transition-colors ${
                         isApplied ? "border-primary bg-primary/10"
                           : usedElsewhere ? "border-border bg-muted/40 opacity-60 cursor-not-allowed"
                           : "border-border bg-card hover:border-primary/50"
                       }`}
                     >
-                      <div className="flex items-center justify-between text-sm font-medium">
-                        <span>{meta.emoji} {meta.label}</span>
-                        {isApplied && <span className="text-xs text-primary">Applied</span>}
-                        {usedElsewhere && <span className="text-xs text-muted-foreground">Used</span>}
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-1">{meta.description}</div>
+                      <div className="text-lg leading-none">{meta.emoji}</div>
+                      <div className="text-[11px] font-medium mt-1 leading-tight">{meta.label}</div>
+                      {isApplied && <div className="text-[10px] text-primary mt-0.5">Applied</div>}
+                      {usedElsewhere && <div className="text-[10px] text-muted-foreground mt-0.5">Used</div>}
                     </button>
                   );
                 })}
@@ -194,7 +221,6 @@ function MatchPage() {
                 </button>
               )}
               {chipMut.isError && <p className="text-sm text-destructive">{(chipMut.error as Error).message}</p>}
-              <p className="text-xs text-muted-foreground">Only one chip per match. Each chip can be used once for the whole tournament.</p>
             </div>
           )}
         </section>
