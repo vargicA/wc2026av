@@ -42,6 +42,35 @@ function Dashboard() {
     },
   });
 
+  const leagueIds = (leagues ?? []).map((l: any) => l.id);
+  const { data: myPositions } = useQuery({
+    queryKey: ["my-league-positions", user?.id, leagueIds.join(",")],
+    enabled: !!user && leagueIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("league_leaderboard")
+        .select("league_id, user_id, points, exact_count, joined_at")
+        .in("league_id", leagueIds);
+      if (error) throw error;
+      const grouped: Record<string, any[]> = {};
+      (data ?? []).forEach((r: any) => {
+        (grouped[r.league_id] ||= []).push(r);
+      });
+      const result: Record<string, { position: number; total: number }> = {};
+      Object.entries(grouped).forEach(([lid, rows]) => {
+        rows.sort((a, b) =>
+          (b.points ?? 0) - (a.points ?? 0) ||
+          (b.exact_count ?? 0) - (a.exact_count ?? 0) ||
+          new Date(a.joined_at).getTime() - new Date(b.joined_at).getTime()
+        );
+        const idx = rows.findIndex((r) => r.user_id === user!.id);
+        if (idx >= 0) result[lid] = { position: idx + 1, total: rows.length };
+      });
+      return result;
+    },
+  });
+
+
   const { data: nextMatch } = useQuery({
     queryKey: ["next-match"],
     queryFn: async () => {
