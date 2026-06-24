@@ -65,12 +65,18 @@ function FixturesPage() {
 
   const filtered = useMemo(() => {
     if (!matches) return [];
-    return matches.filter((m) => {
+    const list = matches.filter((m) => {
       if (filter === "upcoming") return m.status === "scheduled";
       if (filter === "live") return m.status === "live";
       if (filter === "finished") return m.status === "finished";
       return true;
     });
+    if (filter === "finished") {
+      return [...list].sort(
+        (a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime()
+      );
+    }
+    return list;
   }, [matches, filter]);
 
   const grouped = useMemo(() => {
@@ -83,6 +89,7 @@ function FixturesPage() {
     }
     return Array.from(g.entries());
   }, [filtered]);
+
 
   return (
     <main className="container-app py-6">
