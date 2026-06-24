@@ -42,6 +42,35 @@ function Dashboard() {
     },
   });
 
+  const leagueIds = (leagues ?? []).map((l: any) => l.id);
+  const { data: myPositions } = useQuery({
+    queryKey: ["my-league-positions", user?.id, leagueIds.join(",")],
+    enabled: !!user && leagueIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("league_leaderboard")
+        .select("league_id, user_id, points, exact_count, joined_at")
+        .in("league_id", leagueIds);
+      if (error) throw error;
+      const grouped: Record<string, any[]> = {};
+      (data ?? []).forEach((r: any) => {
+        (grouped[r.league_id] ||= []).push(r);
+      });
+      const result: Record<string, { position: number; total: number }> = {};
+      Object.entries(grouped).forEach(([lid, rows]) => {
+        rows.sort((a, b) =>
+          (b.points ?? 0) - (a.points ?? 0) ||
+          (b.exact_count ?? 0) - (a.exact_count ?? 0) ||
+          new Date(a.joined_at).getTime() - new Date(b.joined_at).getTime()
+        );
+        const idx = rows.findIndex((r) => r.user_id === user!.id);
+        if (idx >= 0) result[lid] = { position: idx + 1, total: rows.length };
+      });
+      return result;
+    },
+  });
+
+
   const { data: nextMatch } = useQuery({
     queryKey: ["next-match"],
     queryFn: async () => {
@@ -230,12 +259,15 @@ function Dashboard() {
           <div className="grid gap-2 sm:grid-cols-2">
             {leagues.map((l: any) => {
               const u = unread?.find((x) => x.league_id === l.id)?.unread ?? 0;
+              const pos = myPositions?.[l.id];
               return (
                 <Link key={l.id} to="/leagues/$leagueId" params={{ leagueId: l.id }}
                   className="rounded-lg border border-border bg-card p-4 hover:border-primary/50 flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="font-medium">{l.name}</div>
-                    <div className="text-xs text-muted-foreground mt-1 tabular">Code: {l.invite_code}</div>
+                    <div className="text-xs text-muted-foreground mt-1 tabular">
+                      {pos ? <>Position: <span className="text-foreground font-medium">#{pos.position}</span> of {pos.total}</> : "—"}
+                    </div>
                   </div>
                   {u > 0 && (
                     <span className="pill bg-primary text-primary-foreground text-xs px-2 min-w-[22px] text-center shrink-0">
@@ -245,6 +277,7 @@ function Dashboard() {
                 </Link>
               );
             })}
+
           </div>
         )}
       </section>
