@@ -149,7 +149,30 @@ function MatchPage() {
       {/* Bonus chips */}
       {!finished && (
         <section>
-          <h2 className="display text-lg font-semibold mb-2">Bonus chip</h2>
+          <div className="flex items-center gap-2 mb-2">
+            <h2 className="display text-lg font-semibold">Bonus chip</h2>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button type="button" aria-label="About bonus chips" className="text-muted-foreground hover:text-foreground">
+                  <Info className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="bottom" align="start" className="w-[260px] text-xs">
+                <div className="space-y-1.5">
+                  {CHIP_ORDER.map((type) => {
+                    const meta = CHIP_META[type];
+                    return (
+                      <div key={type}>
+                        <div className="font-medium">{meta.emoji} {meta.label}</div>
+                        <div className="text-muted-foreground">{meta.description}</div>
+                      </div>
+                    );
+                  })}
+                  <div className="pt-1 text-muted-foreground">Only one chip per match. Each chip can be used once for the whole tournament. Tap an applied chip to remove it.</div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
           {isLocked ? (
             myChipOnThisMatch ? (
               <div className="rounded-lg border border-border bg-muted/40 p-3 text-sm">
@@ -160,30 +183,6 @@ function MatchPage() {
             )
           ) : (
             <div className="space-y-2">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-muted-foreground">Pick one chip for this match</span>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button type="button" aria-label="About bonus chips" className="text-muted-foreground hover:text-foreground">
-                      <Info className="w-4 h-4" />
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent side="left" align="end" className="w-[260px] text-xs">
-                    <div className="space-y-1.5">
-                      {CHIP_ORDER.map((type) => {
-                        const meta = CHIP_META[type];
-                        return (
-                          <div key={type}>
-                            <div className="font-medium">{meta.emoji} {meta.label}</div>
-                            <div className="text-muted-foreground">{meta.description}</div>
-                          </div>
-                        );
-                      })}
-                      <div className="pt-1 text-muted-foreground">Only one chip per match. Each chip can be used once for the whole tournament.</div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
               <div className="grid grid-cols-3 gap-2">
                 {CHIP_ORDER.map((type) => {
                   const meta = CHIP_META[type];
@@ -213,17 +212,10 @@ function MatchPage() {
                   );
                 })}
               </div>
-              {myChipOnThisMatch && (
-                <button
-                  onClick={() => removeChipMut.mutate()}
-                  disabled={removeChipMut.isPending}
-                  className="text-xs text-muted-foreground hover:text-destructive">
-                  Remove {CHIP_META[myChipOnThisMatch].label}
-                </button>
-              )}
               {chipMut.isError && <p className="text-sm text-destructive">{(chipMut.error as Error).message}</p>}
             </div>
           )}
+
         </section>
       )}
 
