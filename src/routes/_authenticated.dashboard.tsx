@@ -259,12 +259,15 @@ function Dashboard() {
           <div className="grid gap-2 sm:grid-cols-2">
             {leagues.map((l: any) => {
               const u = unread?.find((x) => x.league_id === l.id)?.unread ?? 0;
+              const pos = myPositions?.[l.id];
               return (
                 <Link key={l.id} to="/leagues/$leagueId" params={{ leagueId: l.id }}
                   className="rounded-lg border border-border bg-card p-4 hover:border-primary/50 flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="font-medium">{l.name}</div>
-                    <div className="text-xs text-muted-foreground mt-1 tabular">Code: {l.invite_code}</div>
+                    <div className="text-xs text-muted-foreground mt-1 tabular">
+                      {pos ? <>Position: <span className="text-foreground font-medium">#{pos.position}</span> of {pos.total}</> : "—"}
+                    </div>
                   </div>
                   {u > 0 && (
                     <span className="pill bg-primary text-primary-foreground text-xs px-2 min-w-[22px] text-center shrink-0">
@@ -274,6 +277,7 @@ function Dashboard() {
                 </Link>
               );
             })}
+
           </div>
         )}
       </section>
