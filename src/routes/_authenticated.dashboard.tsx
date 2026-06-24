@@ -279,6 +279,34 @@ function Dashboard() {
           </div>
         </div>
       </section>
+
+      {/* Chip status */}
+      <section>
+        <h2 className="display text-2xl font-semibold mb-3">Your chips</h2>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {CHIP_ORDER.map((type) => {
+            const used = usedByType.get(type);
+            const meta = CHIP_META[type];
+            return (
+              <div key={type} className={`rounded-lg border p-4 ${used ? "border-border bg-muted/40" : "border-primary/30 bg-card"}`}>
+                <div className="flex items-center gap-2 font-medium">
+                  <span className="text-xl">{meta.emoji}</span>{meta.label}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">{meta.description}</div>
+                <div className="mt-3 text-xs">
+                  {used ? (
+                    <span className="text-muted-foreground">
+                      Applied to <span className="text-foreground font-medium">{used.matches?.team_home} vs {used.matches?.team_away}</span>
+                    </span>
+                  ) : (
+                    <span className="text-primary">Available — apply on any unlocked match.</span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
     </main>
   );
 }
