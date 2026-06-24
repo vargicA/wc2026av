@@ -193,8 +193,11 @@ function MatchPage() {
                   return (
                     <button
                       key={type}
-                      onClick={() => !isApplied && chipMut.mutate(type)}
-                      disabled={disabled}
+                      onClick={() => {
+                        if (isApplied) removeChipMut.mutate();
+                        else chipMut.mutate(type);
+                      }}
+                      disabled={disabled || removeChipMut.isPending}
                       title={meta.description}
                       className={`rounded-lg border p-2 text-center transition-colors ${
                         isApplied ? "border-primary bg-primary/10"
