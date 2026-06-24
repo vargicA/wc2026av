@@ -14,7 +14,7 @@ type Filter = "all" | "upcoming" | "live" | "finished";
 
 function FixturesPage() {
   const { user } = useAuth();
-  const [filter, setFilter] = useState<Filter>("all");
+  const [filter, setFilter] = useState<Filter>("upcoming");
 
   const { data: matches, isLoading } = useQuery({
     queryKey: ["matches"],
@@ -92,7 +92,7 @@ function FixturesPage() {
       </div>
 
       <div className="mt-4 flex gap-1.5 overflow-x-auto pb-2">
-        {(["all", "upcoming", "live", "finished"] as Filter[]).map((f) => (
+        {(["upcoming", "finished", "live", "all"] as Filter[]).map((f) => (
           <button key={f} onClick={() => setFilter(f)}
             className={`pill ${filter === f ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-accent"}`}>
             {f}
