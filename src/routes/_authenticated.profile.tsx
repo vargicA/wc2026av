@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { updateDisplayName } from "@/lib/app.functions";
@@ -42,6 +42,35 @@ function ProfilePage() {
 
   const totalPoints = (history ?? []).reduce((s, h: any) => s + (h.points_awarded ?? 0), 0);
 
+  const stats = useMemo(() => {
+    const scored = (history ?? [])
+      .filter((h: any) => h.matches?.status === "finished" && h.points_awarded !== null)
+      .sort((a: any, b: any) => new Date(a.matches.kickoff_utc).getTime() - new Date(b.matches.kickoff_utc).getTime());
+
+    const total = scored.length;
+    if (total === 0) return null;
+
+    const exact = scored.filter((h: any) => Number(h.points_awarded) === 3).length;
+    const correct = scored.filter((h: any) => Number(h.points_awarded) >= 1).length;
+
+    let longestStreak = 0;
+    let current = 0;
+    for (const h of scored) {
+      if (Number(h.points_awarded) >= 1) {
+        current += 1;
+        longestStreak = Math.max(longestStreak, current);
+      } else {
+        current = 0;
+      }
+    }
+
+    return {
+      exactPct: Math.round((exact / total) * 100),
+      correctPct: Math.round((correct / total) * 100),
+      longestStreak,
+    };
+  }, [history]);
+
   const mut = useMutation({
     mutationFn: async () => update({ data: { display_name: name } }),
     onSuccess: () => { setEdit(false); qc.invalidateQueries({ queryKey: ["profile"] }); },
@@ -78,6 +107,22 @@ function ProfilePage() {
             <div className="text-xs text-muted-foreground uppercase tracking-wider">Total points</div>
             <div className="score-num text-3xl">{totalPoints}</div>
           </div>
+          {stats && (
+            <div className="grid grid-cols-3 gap-2">
+              <div className="rounded-md border border-border bg-muted/40 p-3 text-center">
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Exact</div>
+                <div className="score-num text-xl">{stats.exactPct}%</div>
+              </div>
+              <div className="rounded-md border border-border bg-muted/40 p-3 text-center">
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Correct</div>
+                <div className="score-num text-xl">{stats.correctPct}%</div>
+              </div>
+              <div className="rounded-md border border-border bg-muted/40 p-3 text-center">
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Streak</div>
+                <div className="score-num text-xl">{stats.longestStreak}</div>
+              </div>
+            </div>
+          )}
           <div className="pt-2 border-t border-border">
             <button
               onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }}
