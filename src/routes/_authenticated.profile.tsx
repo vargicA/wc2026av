@@ -42,6 +42,35 @@ function ProfilePage() {
 
   const totalPoints = (history ?? []).reduce((s, h: any) => s + (h.points_awarded ?? 0), 0);
 
+  const stats = useMemo(() => {
+    const scored = (history ?? [])
+      .filter((h: any) => h.matches?.status === "finished" && h.points_awarded !== null)
+      .sort((a: any, b: any) => new Date(a.matches.kickoff_utc).getTime() - new Date(b.matches.kickoff_utc).getTime());
+
+    const total = scored.length;
+    if (total === 0) return null;
+
+    const exact = scored.filter((h: any) => h.points_awarded === 3).length;
+    const correct = scored.filter((h: any) => h.points_awarded >= 1).length;
+
+    let longestStreak = 0;
+    let current = 0;
+    for (const h of scored) {
+      if (h.points_awarded >= 1) {
+        current += 1;
+        longestStreak = Math.max(longestStreak, current);
+      } else {
+        current = 0;
+      }
+    }
+
+    return {
+      exactPct: Math.round((exact / total) * 100),
+      correctPct: Math.round((correct / total) * 100),
+      longestStreak,
+    };
+  }, [history]);
+
   const mut = useMutation({
     mutationFn: async () => update({ data: { display_name: name } }),
     onSuccess: () => { setEdit(false); qc.invalidateQueries({ queryKey: ["profile"] }); },
