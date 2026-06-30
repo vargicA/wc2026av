@@ -57,7 +57,12 @@ async function handler({ request }: { request: Request }) {
   if (matches.length === 0) return Response.json({ synced: 0, note: "No matches returned" });
 
   const rows = matches.map((m) => {
-    const ft = m.score?.fullTime ?? {};
+    // football-data's `fullTime` is the aggregate including ET + penalties for
+    // knockout games. Use `regularTime` (90-min result) when available so
+    // predictions score against the regulation result.
+    const reg = m.score?.regularTime ?? {};
+    const ftRaw = m.score?.fullTime ?? {};
+    const ft = (reg.home != null || reg.away != null) ? reg : ftRaw;
     const et = m.score?.extraTime ?? {};
     const pens = m.score?.penalties ?? {};
     const wentToPens = pens.home != null && pens.away != null;
