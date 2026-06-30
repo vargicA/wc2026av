@@ -107,6 +107,22 @@ function ProfilePage() {
             <div className="text-xs text-muted-foreground uppercase tracking-wider">Total points</div>
             <div className="score-num text-3xl">{totalPoints}</div>
           </div>
+          {stats && (
+            <div className="grid grid-cols-3 gap-2">
+              <div className="rounded-md border border-border bg-muted/40 p-3 text-center">
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Exact</div>
+                <div className="score-num text-xl">{stats.exactPct}%</div>
+              </div>
+              <div className="rounded-md border border-border bg-muted/40 p-3 text-center">
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Correct</div>
+                <div className="score-num text-xl">{stats.correctPct}%</div>
+              </div>
+              <div className="rounded-md border border-border bg-muted/40 p-3 text-center">
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Streak</div>
+                <div className="score-num text-xl">{stats.longestStreak}</div>
+              </div>
+            </div>
+          )}
           <div className="pt-2 border-t border-border">
             <button
               onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }}
