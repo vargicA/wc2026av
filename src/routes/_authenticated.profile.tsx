@@ -50,13 +50,13 @@ function ProfilePage() {
     const total = scored.length;
     if (total === 0) return null;
 
-    const exact = scored.filter((h: any) => h.points_awarded === 3).length;
-    const correct = scored.filter((h: any) => h.points_awarded >= 1).length;
+    const exact = scored.filter((h: any) => Number(h.points_awarded) === 3).length;
+    const correct = scored.filter((h: any) => Number(h.points_awarded) >= 1).length;
 
     let longestStreak = 0;
     let current = 0;
     for (const h of scored) {
-      if (h.points_awarded >= 1) {
+      if (Number(h.points_awarded) >= 1) {
         current += 1;
         longestStreak = Math.max(longestStreak, current);
       } else {
