@@ -95,7 +95,9 @@ function FixturesPage() {
     <main className="container-app py-6">
       <div className="flex items-baseline justify-between">
         <h1 className="display text-3xl font-semibold">Fixtures</h1>
-        <span className="text-sm text-muted-foreground tabular">{matches?.length ?? 0} matches</span>
+        <span className="text-sm text-muted-foreground tabular">
+          {matches?.filter((m) => m.status === "finished").length ?? 0} / {matches?.length ?? 0} played
+        </span>
       </div>
 
       <div className="mt-4 flex gap-1.5 overflow-x-auto pb-2">
