@@ -128,7 +128,7 @@ function MatchPage() {
         {finished && (
           <div className="text-center">
             <div className="score-num text-5xl">
-              {match.score_home_ft}<span className="text-muted-foreground mx-2">·</span>{match.score_away_ft}
+              {match.score_home_ft} : {match.score_away_ft}
             </div>
             {match.went_to_pens && match.pens_winner && (
               <div className="text-sm text-muted-foreground mt-1">
