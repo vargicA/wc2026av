@@ -123,11 +123,26 @@ function Dashboard() {
     queryKey: ["my-chips", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data } = await supabase
+      const { data: chips, error: chipsError } = await supabase
         .from("match_chips")
-        .select("chip_type, match_id, matches(team_home, team_away, kickoff_utc, status)")
+        .select("chip_type, match_id")
         .eq("user_id", user!.id);
-      return data ?? [];
+      if (chipsError) throw chipsError;
+
+      const matchIds = [...new Set((chips ?? []).map((chip) => chip.match_id as number))];
+      if (matchIds.length === 0) return [];
+
+      const { data: matches, error: matchesError } = await supabase
+        .from("matches")
+        .select("id, team_home, team_away, kickoff_utc, status")
+        .in("id", matchIds);
+      if (matchesError) throw matchesError;
+
+      const matchesById = new Map((matches ?? []).map((match) => [match.id, match]));
+      return (chips ?? []).map((chip) => ({
+        ...chip,
+        matches: matchesById.get(chip.match_id as number) ?? null,
+      }));
     },
   });
 
@@ -321,15 +336,22 @@ function Dashboard() {
             const used = usedByType.get(type);
             const meta = CHIP_META[type];
             return (
-              <div key={type} className={`rounded-lg border p-4 ${used ? "border-border bg-muted/40" : "border-primary/30 bg-card"}`}>
-                <div className="flex items-center gap-2 font-medium">
-                  <span className="text-xl">{meta.emoji}</span>{meta.label}
+              <div
+                key={type}
+                aria-disabled={used ? true : undefined}
+                className={`rounded-lg border p-4 transition-opacity ${used ? "border-border bg-muted/40 opacity-60" : "border-primary/30 bg-card"}`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div className={`flex items-center gap-2 font-medium ${used ? "text-muted-foreground" : ""}`}>
+                    <span className="text-xl grayscale-[35%]">{meta.emoji}</span>{meta.label}
+                  </div>
+                  {used && <span className="pill bg-muted text-muted-foreground text-xs">Used</span>}
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">{meta.description}</div>
                 <div className="mt-3 text-xs">
                   {used ? (
                     <span className="text-muted-foreground">
-                      Applied to <span className="text-foreground font-medium">{used.matches?.team_home} vs {used.matches?.team_away}</span>
+                      Used on <span className="text-foreground font-medium">{used.matches ? `${used.matches.team_home} vs ${used.matches.team_away}` : "another match"}</span>
                     </span>
                   ) : (
                     <span className="text-primary">Available — apply on any unlocked match.</span>
