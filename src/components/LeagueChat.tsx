@@ -77,7 +77,8 @@ export function LeagueChat({ leagueId, adminUserId }: Props) {
     markRead({ data: { league_id: leagueId } })
       .then(() => qc.invalidateQueries({ queryKey: ["league-unread"] }))
       .catch(() => {});
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Instant jump on first render, smooth after
+    endRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
   }, [messages, leagueId, markRead, qc]);
 
   const sendMut = useMutation({
@@ -110,7 +111,7 @@ export function LeagueChat({ leagueId, adminUserId }: Props) {
   };
 
   return (
-    <div className="flex flex-col h-[60vh] min-h-[400px] rounded-lg border border-border bg-card overflow-hidden">
+    <div className="flex flex-col flex-1 min-h-0 rounded-lg border border-border bg-card overflow-hidden">
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {!messages || messages.length === 0 ? (
           <div className="text-center text-sm text-muted-foreground py-8">
