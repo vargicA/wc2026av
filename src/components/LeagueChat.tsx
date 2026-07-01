@@ -166,7 +166,7 @@ export function LeagueChat({ leagueId, adminUserId }: Props) {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Type a message… (Enter to send, Shift+Enter for newline)"
+          placeholder="Type a message"
           rows={1}
           maxLength={2000}
           className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
