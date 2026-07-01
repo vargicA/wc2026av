@@ -142,15 +142,19 @@ function LeagueView() {
           </div>
         </section>
       ) : (
-        <LeagueChat leagueId={leagueId} adminUserId={league.created_by} />
+        <div className="flex flex-col h-[calc(100dvh-260px)] min-h-[400px]">
+          <LeagueChat leagueId={leagueId} adminUserId={league.created_by} />
+        </div>
       )}
 
-      <section className="pt-4 border-t border-border">
-        <button onClick={() => { if (confirm("Leave this league?")) leaveMut.mutate(); }}
-          className="text-sm text-destructive hover:underline">
-          Leave league
-        </button>
-      </section>
+      {tab !== "chat" && (
+        <section className="pt-4 border-t border-border">
+          <button onClick={() => { if (confirm("Leave this league?")) leaveMut.mutate(); }}
+            className="text-sm text-destructive hover:underline">
+            Leave league
+          </button>
+        </section>
+      )}
     </main>
   );
 }
