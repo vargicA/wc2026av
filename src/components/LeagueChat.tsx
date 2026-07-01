@@ -77,7 +77,8 @@ export function LeagueChat({ leagueId, adminUserId }: Props) {
     markRead({ data: { league_id: leagueId } })
       .then(() => qc.invalidateQueries({ queryKey: ["league-unread"] }))
       .catch(() => {});
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Instant jump on first render, smooth after
+    endRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
   }, [messages, leagueId, markRead, qc]);
 
   const sendMut = useMutation({
