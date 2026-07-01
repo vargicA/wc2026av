@@ -22,15 +22,24 @@ function applyTheme(theme: Theme) {
 }
 
 export function useTheme() {
-  const [theme, setThemeState] = useState<Theme>(() => getInitialTheme());
+  // Always start with "dark" on both server and first client render to avoid
+  // hydration mismatch. Real preference applied in useEffect after mount.
+  const [theme, setThemeState] = useState<Theme>("dark");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setThemeState(getInitialTheme());
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     applyTheme(theme);
     try { localStorage.setItem(STORAGE_KEY, theme); } catch {}
-  }, [theme]);
+  }, [theme, mounted]);
 
   const setTheme = (t: Theme) => setThemeState(t);
   const toggleTheme = () => setThemeState((t) => (t === "dark" ? "light" : "dark"));
 
-  return { theme, setTheme, toggleTheme };
+  return { theme, setTheme, toggleTheme, mounted };
 }
