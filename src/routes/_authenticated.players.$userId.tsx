@@ -126,7 +126,13 @@ function PlayerProfile() {
                   params={{ matchId: String(r.match_id) }}
                   className="grid grid-cols-[minmax(0,1fr)_4rem_4rem_2.5rem] items-center gap-3 px-3 py-3 hover:bg-accent/30 text-sm"
                 >
-                  <div className="truncate">{r.matches?.team_home} vs {r.matches?.team_away}</div>
+                  <MatchWithBanker
+                    home={r.matches?.team_home}
+                    away={r.matches?.team_away}
+                    homeCode={r.matches?.team_home_code}
+                    awayCode={r.matches?.team_away_code}
+                    bankerCode={banker?.team_code}
+                  />
                   <div className="flex items-center justify-center gap-1 text-center">
                     <span className="tabular font-medium">{r.predicted_score_home}–{r.predicted_score_away}</span>
                     {chip && (
