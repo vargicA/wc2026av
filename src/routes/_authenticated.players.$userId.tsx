@@ -68,12 +68,11 @@ function PlayerProfile() {
           </div>
         ) : (
           <div className="rounded-lg border border-border divide-y divide-border">
-            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2 px-3 py-2 text-[10px] uppercase tracking-wider text-muted-foreground bg-muted/40">
+            <div className="grid grid-cols-[minmax(0,1fr)_4rem_4rem_2.5rem] items-center gap-3 px-3 py-2 text-[10px] uppercase tracking-wider text-muted-foreground bg-muted/40">
               <div className="truncate">Match</div>
-              <div className="text-center px-2">Pick</div>
-              <div className="text-center px-2">Result</div>
-              <div className="text-center px-2">Chip</div>
-              <div className="text-center px-2">Pts</div>
+              <div className="text-center">Pick</div>
+              <div className="text-center">Result</div>
+              <div className="text-center">Pts</div>
             </div>
             {rows.map((r: any) => {
               const finished = r.matches?.status === "finished";
@@ -85,24 +84,24 @@ function PlayerProfile() {
                   key={r.match_id}
                   to="/matches/$matchId"
                   params={{ matchId: String(r.match_id) }}
-                  className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2 px-3 py-3 hover:bg-accent/30 text-sm"
+                  className="grid grid-cols-[minmax(0,1fr)_4rem_4rem_2.5rem] items-center gap-3 px-3 py-3 hover:bg-accent/30 text-sm"
                 >
                   <div className="truncate">{r.matches?.team_home} vs {r.matches?.team_away}</div>
-                  <div className="tabular font-medium text-center px-2">{r.predicted_score_home}–{r.predicted_score_away}</div>
-                  <div className="score-num text-xs text-center px-2">
-                    {finished && actualHome !== null && actualAway !== null ? `${actualHome}–${actualAway}` : "—"}
-                  </div>
-                  <div className="text-center px-2">
-                    {chip ? (
+                  <div className="flex items-center justify-center gap-1 text-center">
+                    <span className="tabular font-medium">{r.predicted_score_home}–{r.predicted_score_away}</span>
+                    {chip && (
                       <span
-                        className="pill bg-secondary text-secondary-foreground truncate"
+                        className="text-xs"
                         title={`${CHIP_META[chip].label}: ${CHIP_META[chip].description}`}
                       >
-                        {CHIP_META[chip].emoji} {CHIP_META[chip].label}
+                        {CHIP_META[chip].emoji}
                       </span>
-                    ) : "—"}
+                    )}
                   </div>
-                  <div className="text-center px-2">
+                  <div className="score-num text-xs text-center">
+                    {finished && actualHome !== null && actualAway !== null ? `${actualHome}–${actualAway}` : "—"}
+                  </div>
+                  <div className="text-center">
                     {finished && r.points_awarded !== null ? (
                       <span className={`pill ${
                         r.points_awarded >= 3 ? "bg-success text-success-foreground" :
