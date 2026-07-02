@@ -7,6 +7,38 @@ export const Route = createFileRoute("/_authenticated/players/$userId")({
   component: PlayerProfile,
 });
 
+function MatchWithBanker({
+  home,
+  away,
+  homeCode,
+  awayCode,
+  bankerCode,
+}: {
+  home: string;
+  away: string;
+  homeCode: string | null;
+  awayCode: string | null;
+  bankerCode: string | null | undefined;
+}) {
+  const homeIsBanker = !!bankerCode && homeCode === bankerCode;
+  const awayIsBanker = !!bankerCode && awayCode === bankerCode;
+  return (
+    <div className="truncate">
+      {homeIsBanker ? (
+        <span className="text-primary font-medium" title="Banker team — points doubled">{home} 🏦</span>
+      ) : (
+        home
+      )}
+      <span className="text-muted-foreground mx-1">vs</span>
+      {awayIsBanker ? (
+        <span className="text-primary font-medium" title="Banker team — points doubled">{away} 🏦</span>
+      ) : (
+        away
+      )}
+    </div>
+  );
+}
+
 function PlayerProfile() {
   const { userId } = Route.useParams();
 
