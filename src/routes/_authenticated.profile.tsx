@@ -44,6 +44,20 @@ function ProfilePage() {
 
   const totalPoints = (history ?? []).reduce((s, h: any) => s + (h.points_awarded ?? 0), 0);
 
+  const { data: chips } = useQuery({
+    queryKey: ["my-chips-profile", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("match_chips")
+        .select("match_id, chip_type")
+        .eq("user_id", user!.id);
+      const m = new Map<number, ChipType>();
+      for (const c of data ?? []) m.set(c.match_id as number, c.chip_type as ChipType);
+      return m;
+    },
+  });
+
   const stats = useMemo(() => {
     const scored = (history ?? [])
       .filter((h: any) => h.matches?.status === "finished" && h.points_awarded !== null)
