@@ -158,23 +158,40 @@ function ProfilePage() {
           </div>
         ) : (
           <div className="rounded-lg border border-border divide-y divide-border">
-            {history.map((h: any) => (
-              <Link key={h.match_id} to="/matches/$matchId" params={{ matchId: String(h.match_id) }}
-                className="block p-3 hover:bg-accent/30">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="truncate">{h.matches?.team_home} vs {h.matches?.team_away}</span>
-                  <span className="flex items-center gap-3">
-                    <span className="text-muted-foreground tabular">{h.predicted_score_home}–{h.predicted_score_away}</span>
-                    {h.matches?.status === "finished" && (
-                      <span className="score-num text-xs text-muted-foreground">→ {h.matches.score_home_ft}–{h.matches.score_away_ft}</span>
-                    )}
-                    {h.points_awarded !== null && (
-                      <span className={`pill ${h.points_awarded === 3 ? "bg-success text-success-foreground" : h.points_awarded === 1 ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>{h.points_awarded}</span>
-                    )}
-                  </span>
-                </div>
-              </Link>
-            ))}
+            {history.map((h: any) => {
+              const chip = chips?.get(h.match_id) ?? null;
+              return (
+                <Link key={h.match_id} to="/matches/$matchId" params={{ matchId: String(h.match_id) }}
+                  className="block p-3 hover:bg-accent/30">
+                  <div className="flex items-center justify-between text-sm gap-3">
+                    <span className="truncate">{h.matches?.team_home} vs {h.matches?.team_away}</span>
+                    <span className="flex flex-wrap items-center justify-end gap-2 shrink-0">
+                      <span className="inline-flex items-baseline gap-1">
+                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Pick</span>
+                        <span className="tabular font-medium">{h.predicted_score_home}–{h.predicted_score_away}</span>
+                      </span>
+                      {h.matches?.status === "finished" && (
+                        <span className="inline-flex items-baseline gap-1">
+                          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Result</span>
+                          <span className="score-num text-xs">{h.matches.score_home_ft}–{h.matches.score_away_ft}</span>
+                        </span>
+                      )}
+                      {chip && (
+                        <span
+                          className="pill bg-secondary text-secondary-foreground"
+                          title={`${CHIP_META[chip].label}: ${CHIP_META[chip].description}`}
+                        >
+                          {CHIP_META[chip].emoji} {CHIP_META[chip].label}
+                        </span>
+                      )}
+                      {h.points_awarded !== null && (
+                        <span className={`pill ${h.points_awarded === 3 ? "bg-success text-success-foreground" : h.points_awarded === 1 ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>{h.points_awarded}</span>
+                      )}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>
