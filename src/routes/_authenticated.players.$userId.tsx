@@ -68,6 +68,13 @@ function PlayerProfile() {
           </div>
         ) : (
           <div className="rounded-lg border border-border divide-y divide-border">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2 px-3 py-2 text-[10px] uppercase tracking-wider text-muted-foreground bg-muted/40">
+              <div className="truncate">Match</div>
+              <div className="text-center px-2">Pick</div>
+              <div className="text-center px-2">Result</div>
+              <div className="text-center px-2">Chip</div>
+              <div className="text-center px-2">Pts</div>
+            </div>
             {rows.map((r: any) => {
               const finished = r.matches?.status === "finished";
               const actualHome = r.matches?.score_home_ft;
@@ -78,39 +85,33 @@ function PlayerProfile() {
                   key={r.match_id}
                   to="/matches/$matchId"
                   params={{ matchId: String(r.match_id) }}
-                  className="block p-3 hover:bg-accent/30"
+                  className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2 px-3 py-3 hover:bg-accent/30 text-sm"
                 >
-                  <div className="flex items-center justify-between text-sm gap-3">
-                    <span className="truncate">{r.matches?.team_home} vs {r.matches?.team_away}</span>
-                    <span className="flex flex-wrap items-center justify-end gap-2 shrink-0">
-                      <span className="inline-flex items-baseline gap-1">
-                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Pick</span>
-                        <span className="tabular font-medium">{r.predicted_score_home}–{r.predicted_score_away}</span>
+                  <div className="truncate">{r.matches?.team_home} vs {r.matches?.team_away}</div>
+                  <div className="tabular font-medium text-center px-2">{r.predicted_score_home}–{r.predicted_score_away}</div>
+                  <div className="score-num text-xs text-center px-2">
+                    {finished && actualHome !== null && actualAway !== null ? `${actualHome}–${actualAway}` : "—"}
+                  </div>
+                  <div className="text-center px-2">
+                    {chip ? (
+                      <span
+                        className="pill bg-secondary text-secondary-foreground truncate"
+                        title={`${CHIP_META[chip].label}: ${CHIP_META[chip].description}`}
+                      >
+                        {CHIP_META[chip].emoji} {CHIP_META[chip].label}
                       </span>
-                      {finished && actualHome !== null && actualAway !== null && (
-                        <span className="inline-flex items-baseline gap-1">
-                          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Result</span>
-                          <span className="score-num text-xs">{actualHome}–{actualAway}</span>
-                        </span>
-                      )}
-                      {chip && (
-                        <span
-                          className="pill bg-secondary text-secondary-foreground"
-                          title={`${CHIP_META[chip].label}: ${CHIP_META[chip].description}`}
-                        >
-                          {CHIP_META[chip].emoji} {CHIP_META[chip].label}
-                        </span>
-                      )}
-                      {finished && r.points_awarded !== null && (
-                        <span className={`pill ${
-                          r.points_awarded >= 3 ? "bg-success text-success-foreground" :
-                          r.points_awarded === 1 || r.points_awarded === 2 ? "bg-accent text-accent-foreground" :
-                          "bg-muted text-muted-foreground"
-                        }`}>
-                          {r.points_awarded}
-                        </span>
-                      )}
-                    </span>
+                    ) : "—"}
+                  </div>
+                  <div className="text-center px-2">
+                    {finished && r.points_awarded !== null ? (
+                      <span className={`pill ${
+                        r.points_awarded >= 3 ? "bg-success text-success-foreground" :
+                        r.points_awarded === 1 || r.points_awarded === 2 ? "bg-accent text-accent-foreground" :
+                        "bg-muted text-muted-foreground"
+                      }`}>
+                        {r.points_awarded}
+                      </span>
+                    ) : "—"}
                   </div>
                 </Link>
               );
