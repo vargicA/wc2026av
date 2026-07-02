@@ -35,10 +35,19 @@ function ProfilePage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("predictions")
-        .select("match_id, predicted_score_home, predicted_score_away, points_awarded, matches(team_home, team_away, kickoff_utc, score_home_ft, score_away_ft, status)")
+        .select("match_id, predicted_score_home, predicted_score_away, points_awarded, matches(team_home, team_away, team_home_code, team_away_code, kickoff_utc, score_home_ft, score_away_ft, status)")
         .eq("user_id", user!.id)
         .order("created_at", { ascending: false });
       return data ?? [];
+    },
+  });
+
+  const { data: banker } = useQuery({
+    queryKey: ["banker", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("user_bankers").select("team_code").eq("user_id", user!.id).maybeSingle();
+      return data;
     },
   });
 
