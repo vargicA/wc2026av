@@ -5,6 +5,8 @@ import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { updateDisplayName } from "@/lib/app.functions";
+import { CHIP_META, type ChipType } from "@/lib/chips";
+
 
 export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
