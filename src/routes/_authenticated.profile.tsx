@@ -158,36 +158,37 @@ function ProfilePage() {
           </div>
         ) : (
           <div className="rounded-lg border border-border divide-y divide-border">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2 px-3 py-2 text-[10px] uppercase tracking-wider text-muted-foreground bg-muted/40">
+              <div className="truncate">Match</div>
+              <div className="text-center px-2">Pick</div>
+              <div className="text-center px-2">Result</div>
+              <div className="text-center px-2">Chip</div>
+              <div className="text-center px-2">Pts</div>
+            </div>
             {history.map((h: any) => {
               const chip = chips?.get(h.match_id) ?? null;
               return (
                 <Link key={h.match_id} to="/matches/$matchId" params={{ matchId: String(h.match_id) }}
-                  className="block p-3 hover:bg-accent/30">
-                  <div className="flex items-center justify-between text-sm gap-3">
-                    <span className="truncate">{h.matches?.team_home} vs {h.matches?.team_away}</span>
-                    <span className="flex flex-wrap items-center justify-end gap-2 shrink-0">
-                      <span className="inline-flex items-baseline gap-1">
-                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Pick</span>
-                        <span className="tabular font-medium">{h.predicted_score_home}–{h.predicted_score_away}</span>
+                  className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2 px-3 py-3 hover:bg-accent/30 text-sm">
+                  <div className="truncate">{h.matches?.team_home} vs {h.matches?.team_away}</div>
+                  <div className="tabular font-medium text-center px-2">{h.predicted_score_home}–{h.predicted_score_away}</div>
+                  <div className="score-num text-xs text-center px-2">
+                    {h.matches?.status === "finished" ? `${h.matches.score_home_ft}–${h.matches.score_away_ft}` : "—"}
+                  </div>
+                  <div className="text-center px-2">
+                    {chip ? (
+                      <span
+                        className="pill bg-secondary text-secondary-foreground truncate"
+                        title={`${CHIP_META[chip].label}: ${CHIP_META[chip].description}`}
+                      >
+                        {CHIP_META[chip].emoji} {CHIP_META[chip].label}
                       </span>
-                      {h.matches?.status === "finished" && (
-                        <span className="inline-flex items-baseline gap-1">
-                          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Result</span>
-                          <span className="score-num text-xs">{h.matches.score_home_ft}–{h.matches.score_away_ft}</span>
-                        </span>
-                      )}
-                      {chip && (
-                        <span
-                          className="pill bg-secondary text-secondary-foreground"
-                          title={`${CHIP_META[chip].label}: ${CHIP_META[chip].description}`}
-                        >
-                          {CHIP_META[chip].emoji} {CHIP_META[chip].label}
-                        </span>
-                      )}
-                      {h.points_awarded !== null && (
-                        <span className={`pill ${h.points_awarded === 3 ? "bg-success text-success-foreground" : h.points_awarded === 1 ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>{h.points_awarded}</span>
-                      )}
-                    </span>
+                    ) : "—"}
+                  </div>
+                  <div className="text-center px-2">
+                    {h.points_awarded !== null ? (
+                      <span className={`pill ${h.points_awarded === 3 ? "bg-success text-success-foreground" : h.points_awarded === 1 ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>{h.points_awarded}</span>
+                    ) : "—"}
                   </div>
                 </Link>
               );
