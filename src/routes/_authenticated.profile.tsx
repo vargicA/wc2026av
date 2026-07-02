@@ -210,7 +210,13 @@ function ProfilePage() {
               return (
                 <Link key={h.match_id} to="/matches/$matchId" params={{ matchId: String(h.match_id) }}
                   className="grid grid-cols-[minmax(0,1fr)_4rem_4rem_2.5rem] items-center gap-3 px-3 py-3 hover:bg-accent/30 text-sm">
-                  <div className="truncate">{h.matches?.team_home} vs {h.matches?.team_away}</div>
+                  <MatchWithBanker
+                    home={h.matches?.team_home}
+                    away={h.matches?.team_away}
+                    homeCode={h.matches?.team_home_code}
+                    awayCode={h.matches?.team_away_code}
+                    bankerCode={banker?.team_code}
+                  />
                   <div className="flex items-center justify-center gap-1 text-center">
                     <span className="tabular font-medium">{h.predicted_score_home}–{h.predicted_score_away}</span>
                     {chip && (
