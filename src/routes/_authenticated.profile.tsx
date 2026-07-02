@@ -12,6 +12,38 @@ export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
 });
 
+function MatchWithBanker({
+  home,
+  away,
+  homeCode,
+  awayCode,
+  bankerCode,
+}: {
+  home: string;
+  away: string;
+  homeCode: string | null;
+  awayCode: string | null;
+  bankerCode: string | null | undefined;
+}) {
+  const homeIsBanker = !!bankerCode && homeCode === bankerCode;
+  const awayIsBanker = !!bankerCode && awayCode === bankerCode;
+  return (
+    <div className="truncate">
+      {homeIsBanker ? (
+        <span className="text-primary font-medium" title="Banker team — points doubled">{home} 🏦</span>
+      ) : (
+        home
+      )}
+      <span className="text-muted-foreground mx-1">vs</span>
+      {awayIsBanker ? (
+        <span className="text-primary font-medium" title="Banker team — points doubled">{away} 🏦</span>
+      ) : (
+        away
+      )}
+    </div>
+  );
+}
+
 function ProfilePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -35,10 +67,19 @@ function ProfilePage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("predictions")
-        .select("match_id, predicted_score_home, predicted_score_away, points_awarded, matches(team_home, team_away, kickoff_utc, score_home_ft, score_away_ft, status)")
+        .select("match_id, predicted_score_home, predicted_score_away, points_awarded, matches(team_home, team_away, team_home_code, team_away_code, kickoff_utc, score_home_ft, score_away_ft, status)")
         .eq("user_id", user!.id)
         .order("created_at", { ascending: false });
       return data ?? [];
+    },
+  });
+
+  const { data: banker } = useQuery({
+    queryKey: ["banker", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("user_bankers").select("team_code").eq("user_id", user!.id).maybeSingle();
+      return data;
     },
   });
 
@@ -169,7 +210,13 @@ function ProfilePage() {
               return (
                 <Link key={h.match_id} to="/matches/$matchId" params={{ matchId: String(h.match_id) }}
                   className="grid grid-cols-[minmax(0,1fr)_4rem_4rem_2.5rem] items-center gap-3 px-3 py-3 hover:bg-accent/30 text-sm">
-                  <div className="truncate">{h.matches?.team_home} vs {h.matches?.team_away}</div>
+                  <MatchWithBanker
+                    home={h.matches?.team_home}
+                    away={h.matches?.team_away}
+                    homeCode={h.matches?.team_home_code}
+                    awayCode={h.matches?.team_away_code}
+                    bankerCode={banker?.team_code}
+                  />
                   <div className="flex items-center justify-center gap-1 text-center">
                     <span className="tabular font-medium">{h.predicted_score_home}–{h.predicted_score_away}</span>
                     {chip && (
